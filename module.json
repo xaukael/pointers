@@ -1,0 +1,32 @@
+{
+  "title": "Pointers",
+  "description": "Use hotkeys to show icons at your cursor",
+  "version": "0.0.1",
+  "scripts": [
+    "pointers.js"
+  ],
+  "url": "https://github.com/xaukael/pointers",
+  "socket": true,
+  "manifest": "https://raw.githubusercontent.com/xaukael/pointers/main/module.json",
+  "download": "https://raw.githubusercontent.com/xaukael/pointers/main/pointers.zip",
+  "id": "pointers",
+  "authors": [
+    {
+      "name": "Xaukael",
+      "flags": {}
+    }
+  ],
+  "relationships": {
+    "requires": [
+      {
+        "id": "socketlib",
+        "type": "module",
+        "compatibility": {}
+      }
+    ]
+  },
+  "compatibility": {
+    "minimum": "10",
+    "verified": "11"
+  }
+}
