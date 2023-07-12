@@ -1,11 +1,9 @@
-
-
-let pointerSocket;
+let pointerSocket
 
 Hooks.once("socketlib.ready", () => {
-  pointerSocket = socketlib.registerModule("token-talk");
-  pointerSocket.register("TokenTalk", tokenTalk);
-  function tokenTalk(userId, show, x, y, icon) {
+  
+  pointerSocket = socketlib.registerModule("pointers");
+  function point(userId, show, x, y, icon) {
    let user = game.users.get(userId)
    if (user.viewedScene!=canvas.scene.id) return;
    let size = canvas.grid.size;
@@ -29,24 +27,25 @@ Hooks.once("socketlib.ready", () => {
 
     return  $(`#hud`).append($bubble);
   }
+  pointerSocket.register("point", point);
   pointerSocket.emit = function(show, icon) {
   if (!show) {
    $(`#hud`).off('mousemove').css({cursor: 'unset'})
-   return pointerSocket.executeForEveryone(tokenTalk, game.user.id, false);
+   return pointerSocket.executeForEveryone(point, game.user.id, false);
   }
   pointerSocket.icon = icon;
   
   $(`#hud`).on('mousemove', function(e){
-   let position = canvas.app.renderer.plugins.interaction.mouse.getLocalPosition(canvas.app.stage);
-   pointerSocket.executeForEveryone(tokenTalk, game.user.id, true, position.x, position.y, pointerSocket.icon);
+   let position = (game.release?.generation < 11)?canvas.app.renderer.plugins.interaction.mouse.getLocalPosition(canvas.app.stage):canvas.app.renderer.plugins.interaction.pointer.getLocalPosition(canvas.app.stage);
+   pointerSocket.executeForEveryone(point, game.user.id, true, position.x, position.y, pointerSocket.icon);
   }).css({cursor: 'none'})
-  let position = canvas.app.renderer.plugins.interaction.mouse.getLocalPosition(canvas.app.stage);
-  pointerSocket.executeForEveryone(tokenTalk, game.user.id, true, position.x, position.y, icon);
+  let position = (game.release?.generation < 11)?canvas.app.renderer.plugins.interaction.mouse.getLocalPosition(canvas.app.stage):canvas.app.renderer.plugins.interaction.pointer.getLocalPosition(canvas.app.stage);
+  pointerSocket.executeForEveryone(point, game.user.id, true, position.x, position.y, icon);
  }
 });
 
 Hooks.once('init', () => {
- game.keybindings.register("token-talk", "showArrow", {
+ game.keybindings.register("pointers", "showArrow", {
      name: "Arrow",
      hint: "Show Arrow at cursor",
      editable: [{key: "KeyX"}],
@@ -54,7 +53,7 @@ Hooks.once('init', () => {
      onUp: () => { return pointerSocket.emit(false) },      
      precedence: CONST.KEYBINDING_PRECEDENCE.PRIORITY
  });
- game.keybindings.register("token-talk", "showSpeak", {
+ game.keybindings.register("pointers", "showSpeak", {
      name: "Speak",
      hint: "Show speach bubble at cursor",
      editable: [{key: "KeyX", modifiers: [KeyboardManager.MODIFIER_KEYS.CONTROL] }],
@@ -62,7 +61,7 @@ Hooks.once('init', () => {
      onUp: () => { return pointerSocket.emit(false, "") },      
      precedence: CONST.KEYBINDING_PRECEDENCE.PRIORITY
  });
- game.keybindings.register("token-talk", "showThink", {
+ game.keybindings.register("pointers", "showThink", {
      name: "Think",
      hint: "Show light bulb at cursor",
      editable: [{key: "KeyX", modifiers: [KeyboardManager.MODIFIER_KEYS.SHIFT] }],
@@ -70,7 +69,7 @@ Hooks.once('init', () => {
      onUp: () => { return pointerSocket.emit(false) },      
      precedence: CONST.KEYBINDING_PRECEDENCE.PRIORITY
  });
- game.keybindings.register("token-talk", "showPoint", {
+ game.keybindings.register("pointers", "showPoint", {
      name: "Point",
      hint: "Show pointer at cursor",
      editable: [{key: "KeyX", modifiers: [KeyboardManager.MODIFIER_KEYS.SHIFT, KeyboardManager.MODIFIER_KEYS.CONTROL] }],
