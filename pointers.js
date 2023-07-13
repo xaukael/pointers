@@ -4,40 +4,44 @@ Hooks.once("socketlib.ready", () => {
   
   pointerSocket = socketlib.registerModule("pointers");
   function point(userId, show, x, y, icon) {
-   let user = game.users.get(userId)
+   let user = game.users.get(userId);
    if (user.viewedScene!=canvas.scene.id) return;
    let size = canvas.grid.size*game.settings.get('pointers', 'sizeMultiplier');
-   let $bubble = $(`#${userId}-talk-bubble`);
-   if (!show) return $bubble.remove();
-   if ($bubble.length) return $bubble.css({top: `${y-size}px`, left: `${x}px`})
-   $bubble = $(`<div id="${userId}-talk-bubble" style="position: absolute;  top: ${y-size}px; left: ${x}px; ">
+   let $pointer = $(`#${userId}-talk-bubble`);
+   if (!show) {
+    if (game.user.id!=userId) canvas.controls._cursors[userId].alpha = 1;
+    return $pointer.remove();
+   }
+   if ($pointer.length) return $pointer.css({top: `${y-size}px`, left: `${x}px`})
+   $pointer = $(`<div id="${userId}-talk-bubble" style="position: absolute;  top: ${y-size}px; left: ${x}px; ">
     <style>
     .talk-icon {
       font-size: ${size}px;
-      ${game.settings.get('pointers', 'css')}
       color:${user.color};
+      ${game.settings.get('pointers', 'css')}
     }
-    #hud {pointer-events: all !important;}
     </style>
     <span class="talk-icon" style="">${icon}</span>
     </div>`);
-
-    return  $(`#hud`).append($bubble);
+    
+    if (game.user.id!=userId) canvas.controls._cursors[userId].alpha = 0;
+    return  $(`#hud`).append($pointer);
   }
+    //#hud {pointer-events: all !important;}
   pointerSocket.register("point", point);
   pointerSocket.emit = function(show, icon) {
-  if (!show) {
-   $(`#hud`).off('mousemove').css({cursor: 'unset'})
-   return pointerSocket.executeForEveryone(point, game.user.id, false);
-  }
-  pointerSocket.icon = icon;
-  
-  $(`#hud`).on('mousemove', function(e){
+   if (!show) {
+    $(`#board`).off('mousemove').css({cursor: 'unset'})
+    return pointerSocket.executeForEveryone(point, game.user.id, false);
+   }
+   pointerSocket.icon = icon;
+   
+   $(`#board`).on('mousemove', function(e){
+    let position = (game.release?.generation < 11)?canvas.app.renderer.plugins.interaction.mouse.getLocalPosition(canvas.app.stage):canvas.app.renderer.plugins.interaction.pointer.getLocalPosition(canvas.app.stage);
+    pointerSocket.executeForEveryone(point, game.user.id, true, position.x, position.y, pointerSocket.icon);
+   }).css({cursor: 'none'})
    let position = (game.release?.generation < 11)?canvas.app.renderer.plugins.interaction.mouse.getLocalPosition(canvas.app.stage):canvas.app.renderer.plugins.interaction.pointer.getLocalPosition(canvas.app.stage);
-   pointerSocket.executeForEveryone(point, game.user.id, true, position.x, position.y, pointerSocket.icon);
-  }).css({cursor: 'none'})
-  let position = (game.release?.generation < 11)?canvas.app.renderer.plugins.interaction.mouse.getLocalPosition(canvas.app.stage):canvas.app.renderer.plugins.interaction.pointer.getLocalPosition(canvas.app.stage);
-  pointerSocket.executeForEveryone(point, game.user.id, true, position.x, position.y, icon);
+   pointerSocket.executeForEveryone(point, game.user.id, true, position.x, position.y, icon);
  }
 });
 
