@@ -14,14 +14,7 @@ Hooks.once("socketlib.ready", () => {
    }
    if ($pointer.length) return $pointer.css({top: `${y-size}px`, left: `${x}px`})
    $pointer = $(`<div id="${userId}-talk-bubble" style="position: absolute;  top: ${y-size}px; left: ${x}px; display:block !important;">
-    <style>
-    .talk-icon {
-      font-size: ${size}px;
-      color:${user.color};
-      ${game.settings.get('pointers', 'css')}
-    }
-    </style>
-    <span class="talk-icon" style="">${icon}</span>
+    <span class="talk-icon" style="font-size: ${size}px; color:${user.color}; ${game.settings.get('pointers', 'css')}">${icon}</span>
     </div>`);
     
     if (game.user.id!=userId) canvas.controls._cursors[userId].alpha = 0;
