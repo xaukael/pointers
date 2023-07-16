@@ -1,6 +1,9 @@
 # pointers
 Use hotkeys to show icons at your cursor
 
+0.0.5
+  - fixed conflicting CSS 
+
 0.0.4
   - Monk's Common Display compatibility fix
     
