@@ -13,7 +13,7 @@ Hooks.once("socketlib.ready", () => {
     return $pointer.remove();
    }
    if ($pointer.length) return $pointer.css({top: `${y-size}px`, left: `${x}px`})
-   $pointer = $(`<div id="${userId}-talk-bubble" style="position: absolute;  top: ${y-size}px; left: ${x}px; ">
+   $pointer = $(`<div id="${userId}-talk-bubble" style="position: absolute;  top: ${y-size}px; left: ${x}px; display:block !important;">
     <style>
     .talk-icon {
       font-size: ${size}px;
