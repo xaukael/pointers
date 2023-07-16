@@ -2,7 +2,7 @@
 Use hotkeys to show icons at your cursor
 
 0.0.5
-  - fixed conflicting CSS 
+  - fixed conflicting CSS with more than one pointer active
 
 0.0.4
   - Monk's Common Display compatibility fix
